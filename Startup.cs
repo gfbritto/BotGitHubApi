@@ -1,3 +1,7 @@
+using BotGitHubApi.Business;
+using BotGitHubApi.Business.Implementations;
+using BotGitHubApi.Repository;
+using BotGitHubApi.Repository.Implementations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -27,6 +31,10 @@ namespace BotGitHubApi
         {
             services.AddControllers();
             services.AddApiVersioning();
+
+            //Dependecy injection
+            services.AddScoped<IRepoBusiness, RepoBusinessImplementation >();
+            services.AddScoped<IRepoRepository, RepoRepositoryImplementation >();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

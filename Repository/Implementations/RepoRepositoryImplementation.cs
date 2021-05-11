@@ -1,18 +1,18 @@
-﻿using Newtonsoft.Json;
+﻿using BotGitHubApi.Models;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 
-namespace BotGitHubApi.Models
+namespace BotGitHubApi.Repository.Implementations
 {
-    public class Repository
+    public class RepoRepositoryImplementation : IRepoRepository
     {
-        public string full_name { get; set; }
-        public string node_id { get; set; }
-        //public string description { get; set; }
-
-        public static List<Repository> GetGitHubRepositories()
+        public List<Repo> FindRepos()
         {
+            //Acessa API do github e pega os ultimos 5 repositórios
+            string repoUrlName = "takenet";
+            int qtdeResultados = 5;
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Accept.Clear();
@@ -20,9 +20,10 @@ namespace BotGitHubApi.Models
                     new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));
                 client.DefaultRequestHeaders.Add("User-Agent", ".NET Foundation Repository Reporter");
 
-                var response = client.GetAsync("https://api.github.com/orgs/takenet/repos?sort=created&per_page=5&direction=desc").Result;
+                var response = client
+                    .GetAsync($"https://api.github.com/orgs/{repoUrlName}/repos?sort=created&per_page={qtdeResultados}&direction=desc").Result;
                 string responseBody = response.Content.ReadAsStringAsync().Result;
-                var repositories = JsonConvert.DeserializeObject<List<Repository>>(responseBody);
+                var repositories = JsonConvert.DeserializeObject<List<Repo>>(responseBody);
                 return repositories;
             }
         }

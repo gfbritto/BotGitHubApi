@@ -1,4 +1,4 @@
-﻿using BotGitHubApi.Models;
+﻿using BotGitHubApi.Business;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -11,16 +11,18 @@ namespace BotGitHubApi.Controllers
     {
 
         private readonly ILogger<RepositoryController> _logger;
+        private IRepoBusiness _repoBusiness;
 
-        public RepositoryController(ILogger<RepositoryController> logger)
+        public RepositoryController(ILogger<RepositoryController> logger, IRepoBusiness repoBusiness)
         {
             _logger = logger;
+            _repoBusiness = repoBusiness;
         }
 
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok(Repository.GetGitHubRepositories());
+            return Ok(_repoBusiness.FindRepos());
         }
     }
 }
