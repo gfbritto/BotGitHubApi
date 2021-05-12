@@ -4,16 +4,11 @@ using BotGitHubApi.Repository;
 using BotGitHubApi.Repository.Implementations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.OpenApi.Models;
 
 namespace BotGitHubApi
 {
@@ -32,9 +27,25 @@ namespace BotGitHubApi
             services.AddControllers();
             services.AddApiVersioning();
 
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "BotGithubApi",
+                    Version = "v1",
+                    Description = "API Rest - Developer Challenge TakeBlip",
+                    Contact = new OpenApiContact
+                    {
+                        Email = "gfbritto@outlook.com",
+                        Name = "Gabriel Brito",
+                        Url = new System.Uri("https://github.com/gfbritto")
+                    }
+                });
+            });
+
             //Dependecy injection
-            services.AddScoped<IRepoBusiness, RepoBusinessImplementation >();
-            services.AddScoped<IRepoRepository, RepoRepositoryImplementation >();
+            services.AddScoped<IRepoBusiness, RepoBusinessImplementation>();
+            services.AddScoped<IRepoRepository, RepoRepositoryImplementation>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,6 +59,16 @@ namespace BotGitHubApi
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "API Rest - Developer Challenge TakeBlip - v1");
+            });
+
+            var option = new RewriteOptions();
+            option.AddRedirect("^$", "swagger");
+            app.UseRewriter(option);
 
             app.UseAuthorization();
 

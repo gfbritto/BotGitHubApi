@@ -1,6 +1,8 @@
 ﻿using BotGitHubApi.Business;
+using BotGitHubApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 
 namespace BotGitHubApi.Controllers
 {
@@ -20,6 +22,7 @@ namespace BotGitHubApi.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(200, Type = typeof(List<Repo>)),]
         public IActionResult Get()
         {
             return Ok(_repoBusiness.FindRepos());

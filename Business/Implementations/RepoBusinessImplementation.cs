@@ -17,7 +17,10 @@ namespace BotGitHubApi.Business.Implementations
         }
         public List<Repo> FindRepos()
         {
-            return _repository.FindRepos();
+            var repositories = _repository.FindRepos();
+            //filter by c# language, top five and order by creation date 
+            repositories = repositories.Where(x => x.language == "C#").OrderBy(o => o.created_at).Take(5).ToList();
+            return repositories;
         }
     }
 }

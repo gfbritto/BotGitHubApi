@@ -12,7 +12,7 @@ namespace BotGitHubApi.Repository.Implementations
         {
             //Acessa API do github e pega os ultimos 5 repositórios
             string repoUrlName = "takenet";
-            int qtdeResultados = 5;
+
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Accept.Clear();
@@ -21,7 +21,7 @@ namespace BotGitHubApi.Repository.Implementations
                 client.DefaultRequestHeaders.Add("User-Agent", ".NET Foundation Repository Reporter");
 
                 var response = client
-                    .GetAsync($"https://api.github.com/orgs/{repoUrlName}/repos?sort=created&per_page={qtdeResultados}&direction=desc").Result;
+                    .GetAsync($"https://api.github.com/orgs/{repoUrlName}/repos?sort=created&direction=asc").Result;
                 string responseBody = response.Content.ReadAsStringAsync().Result;
                 var repositories = JsonConvert.DeserializeObject<List<Repo>>(responseBody);
                 return repositories;
