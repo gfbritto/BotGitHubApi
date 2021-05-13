@@ -21,11 +21,23 @@ namespace BotGitHubApi.Controllers
             _repoBusiness = repoBusiness;
         }
 
-        [HttpGet]
-        [ProducesResponseType(200, Type = typeof(List<Repo>)),]
-        public IActionResult Get()
+        [HttpGet("{org}")]
+        [ProducesResponseType(200, Type = typeof(List<Repo>))]
+        public IActionResult Get(string org, [FromQuery] int per_page = 10, [FromQuery] string sortDirection = "asc", [FromQuery] string language = "")
         {
-            return Ok(_repoBusiness.FindRepos());
+            var repos = _repoBusiness.FindRepos(org, per_page, sortDirection, language);
+            if (repos == null) return NotFound();
+
+            return Ok(repos);
+
+        }
+        [HttpGet("{org}/{position}")]
+        [ProducesResponseType(200, Type = typeof(Repo))]
+        public IActionResult GetbyOrder(string org, int position, [FromQuery] string sortDirection = "asc", [FromQuery] string language = "")
+        {
+            var repo = _repoBusiness.FindRepoByPosition(org, position, sortDirection, language);
+            if (repo == null) return NotFound();
+            return Ok(repo);
         }
     }
 }

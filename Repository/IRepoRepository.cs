@@ -5,6 +5,6 @@ namespace BotGitHubApi.Repository
 {
     public interface IRepoRepository
     {
-        List<Repo> FindRepos();
+        List<Repo> FindRepos(string org);
     }
 }

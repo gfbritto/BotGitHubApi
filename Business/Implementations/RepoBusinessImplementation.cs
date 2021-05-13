@@ -15,12 +15,50 @@ namespace BotGitHubApi.Business.Implementations
         {
             _repository = repoRepository;
         }
-        public List<Repo> FindRepos()
+
+        public List<Repo> FindRepos(string org, int per_page, string sortDirection, string language)
         {
-            var repositories = _repository.FindRepos();
-            //filter by c# language, top five and order by creation date 
-            repositories = repositories.Where(x => x.language == "C#").OrderBy(o => o.created_at).Take(5).ToList();
+            var repositories = _repository.FindRepos(org);
+            if (repositories != null)
+            {
+                if (!string.IsNullOrWhiteSpace(language))
+                {
+                    //Remove null languages
+                    repositories = repositories.Where(l => l.language != null).ToList();
+                    repositories = repositories.Where(x => x.language.Equals(language, StringComparison.OrdinalIgnoreCase)).ToList();
+                }
+                //filter by number of result
+                if (per_page != 0)
+                {
+                    repositories = repositories.Take(per_page).ToList();
+                }
+                //asc or desc
+                if (!string.IsNullOrWhiteSpace(sortDirection))
+                {
+                    if (sortDirection == "desc")
+                    {
+                        repositories = repositories.OrderByDescending(o => o.created_at).ToList();
+                    }
+                    else
+                    {
+                        repositories = repositories.OrderBy(o => o.created_at).ToList();
+                    }
+                }
+            }
             return repositories;
+        }
+
+        public Repo FindRepoByPosition(string org, int position, string sortDirection, string language)
+        {
+            var repos = FindRepos(org, 0, "", language);
+            if (repos ==null)
+            {
+                return null;
+               
+            }
+            var repo = repos[position];
+
+            return repo;
         }
     }
 }
